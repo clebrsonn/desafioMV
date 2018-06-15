@@ -4,14 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import javax.validation.constraints.Email;
 import java.util.Objects;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+public class User {
 
 
     @Id
@@ -19,7 +19,11 @@ public class User implements Serializable {
     private Long id;
     private String name;
     private String login;
+
+    @Email
     private String email;
+
+
     private String pwd;
 
     @Override

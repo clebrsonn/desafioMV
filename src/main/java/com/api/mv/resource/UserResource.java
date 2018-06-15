@@ -10,12 +10,15 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/user")
 public class UserResource {
 
     private final UserRepository userRepository;
+    static Logger logger;
 
     @Autowired
     public UserResource(UserRepository userRepository) {
@@ -39,8 +42,9 @@ public class UserResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> searchUser(@PathVariable Long id) {
-        User user = userRepository.getOne(id);
-        return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(user);
+
+        Optional<User> user = userRepository.findById(id);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 }
