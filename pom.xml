@@ -66,6 +66,12 @@
             <version>1.16.18</version>
         </dependency>
 
+        <!--String Security-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

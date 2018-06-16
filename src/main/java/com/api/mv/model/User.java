@@ -36,8 +36,7 @@ public class User {
     @Min(5)
     private String pwd;
 
-    @Min(5)
-    private boolean isActive;
+//    private boolean isActive;
 
 
     @Override

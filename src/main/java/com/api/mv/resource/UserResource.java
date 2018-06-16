@@ -6,6 +6,8 @@ import com.api.mv.repository.UserRepository;
 import com.api.mv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -41,6 +44,13 @@ public class UserResource {
         return userRepository.findAll();
     }
 
+
+    @GetMapping("/filter")
+    public Page<User> list(@RequestParam(required = false) Map<String, String> filters,
+                           @RequestParam(defaultValue = "0") Integer page,
+                           @RequestParam(defaultValue = "10") Integer size) {
+        return userService.list(filters, new PageRequest(page, size));
+    }
 
     @PostMapping
     public ResponseEntity<User> saveUser(@Valid @RequestBody User user, HttpServletResponse response) {

@@ -34,10 +34,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         String messageUser = messageSource.getMessage("mensagem.invalida", null,
                 LocaleContextHolder.getLocale());
-        String messageDev = ex.getCause() !=null ? ex.getCause().toString() : ex.toString();
+        String messageDev = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
         List<Erro> erros = Arrays.asList(new Erro(messageDev, messageUser));
 
         return handleExceptionInternal(ex, new Erro(messageDev, messageUser), headers, status, request);
+    }
+
+    @ExceptionHandler({NoSuchFieldException.class})
+    protected ResponseEntity<Object> handleNoSuchFieldException(NoSuchFieldException ex, WebRequest request) {
+        String messageUser = messageSource.getMessage("parametro.invalido", null, LocaleContextHolder.getLocale());
+        String messageDev = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
+        List<Erro> erros = Arrays.asList(new Erro(messageDev, messageUser));
+        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+
     }
 
     @Override
@@ -49,11 +58,10 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
 
-
     @ExceptionHandler({EmptyResultDataAccessException.class})
     public ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex, WebRequest request) {
         String messageUser = messageSource.getMessage("recurso.nao-encontrado", null, LocaleContextHolder.getLocale());
-        String messageDev = ex.getCause() !=null ? ex.getCause().toString() : ex.toString();
+        String messageDev = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
         List<Erro> erros = Arrays.asList(new Erro(messageDev, messageUser));
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
