@@ -5,6 +5,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Getter
@@ -17,14 +20,25 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
+    @NotBlank
     private String name;
+
+    @NotNull
+    @NotBlank
     private String login;
 
     @Email
     private String email;
 
-
+    @NotNull
+    @NotBlank
+    @Min(5)
     private String pwd;
+
+    @Min(5)
+    private boolean isActive;
+
 
     @Override
     public boolean equals(Object o) {

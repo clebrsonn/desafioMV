@@ -1,14 +1,17 @@
 package com.api.mv.resource;
 
+import com.api.mv.listener.EventListenerCreated;
 import com.api.mv.model.User;
 import com.api.mv.repository.UserRepository;
+import com.api.mv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
-import java.net.URI;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -16,14 +19,22 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/user")
 public class UserResource {
-
     private final UserRepository userRepository;
+
+    private final UserService userService;
+
+    private final ApplicationEventPublisher publisher;
+
+
     static Logger logger;
 
     @Autowired
-    public UserResource(UserRepository userRepository) {
+    public UserResource(UserRepository userRepository, UserService userService, ApplicationEventPublisher publisher) {
         this.userRepository = userRepository;
+        this.userService = userService;
+        this.publisher = publisher;
     }
+
 
     @GetMapping
     public List<User> users() {
@@ -32,12 +43,10 @@ public class UserResource {
 
 
     @PostMapping
-    public ResponseEntity<User> saveUser(@RequestBody User user, HttpServletResponse response) {
+    public ResponseEntity<User> saveUser(@Valid @RequestBody User user, HttpServletResponse response) {
         User userSaved = userRepository.save(user);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
-                .buildAndExpand(userSaved.getId()).toUri();
-        response.setHeader("Location", uri.toASCIIString());
-        return ResponseEntity.created(uri).body(userSaved);
+        publisher.publishEvent(new EventListenerCreated(this, response, userSaved.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userSaved);
     }
 
     @GetMapping("/{id}")
@@ -47,4 +56,15 @@ public class UserResource {
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") Long id) {
+        userRepository.deleteById(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> update(@PathVariable Long id, @Valid @RequestBody User user) {
+        User userSaved = userService.update(id, user);
+        return ResponseEntity.ok(userSaved);
+    }
 }
