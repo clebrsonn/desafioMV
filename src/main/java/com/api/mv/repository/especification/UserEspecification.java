@@ -12,7 +12,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * Classe usada para fazer JPA Especificatio,
+ * utiliza Reflection para pegar os dados passados na url e verficar se
+ * os mesmos são propriedades da classe ao qual ele verifica
+ */
 public class UserEspecification {
 
     private static final String FIELD_SEPARATOR = ".";
@@ -53,6 +57,7 @@ public class UserEspecification {
         }
     }
 
+//Criava criteriabuilder pra cada propriedade passada na classe userFilter utilizando metadado
 //    public static Specification<User> name(String name) {
 //        return (root, criteriaQuery, criteriaBuilder) ->
 //                criteriaBuilder.equal(root.get(User_.name), name);
